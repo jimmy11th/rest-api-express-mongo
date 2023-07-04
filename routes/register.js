@@ -1,20 +1,28 @@
 const express = require("express")
 const router = express.Router()
 const Account = require("../model/account")
+const bcrypt = require('bcryptjs')
 
 
-router.route('/account').post(async (req, res) => {
-    const account = new Account({
-        username: req.body.username,
-        password: req.body.password
-    })
-    try {
-        const accountToSave = await account.save();
-        res.status(200).json(accountToSave)
-    }
-    catch (error) {
-        res.status(400).json({ message: error.message })
-    }
+router.route('/register').post(async (req, res) => {
+    bcrypt.hash(req.body.password, 10)
+        .then(async (hashedPassword) => {
+            const account = new Account({
+                username: req.body.username,
+                password: hashedPassword
+            })
+            account.save().then((result) => {
+                res.status(201).send({
+                    message: "User Created Successfully",
+                    result,
+                });
+            }).catch();
+        }).catch((e) => {
+            res.status(500).send({
+                message: "Password was not hashed successfully",
+                e,
+            });
+        })
 })
 
 module.exports = router
