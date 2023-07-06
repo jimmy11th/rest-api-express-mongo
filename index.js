@@ -1,6 +1,4 @@
 require('dotenv').config();
-// const SECRET = 'haiancs1993'
-// const Account = require('../model/account')
 const express = require('express');
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;

@@ -3,19 +3,25 @@ const router = express.Router()
 const User = require("../model/user")
 
 
-router.route('/user').post(async (req, res) => {
-    const data = new User({
-        name: req.body.name,
-        age: req.body.age
+router.route('/user')
+    .post(async (req, res) => {
+        console.log('haiancs', req.body);
+        const user = new User({
+            name: req.body.name,
+            age: req.body.age
+        })
+        user.save().then((result) => {
+            res.status(201).send({
+                message: "User Created Successfully",
+                result,
+            });
+        }).catch((err) => {
+            res.status(500).json({
+                message: "User Created failed",
+                err,
+            })
+        });
     })
-    try {
-        const dataToSave = await data.save();
-        res.status(200).json(dataToSave)
-    }
-    catch (error) {
-        res.status(400).json({ message: error.message })
-    }
-})
     .get(async (req, res) => {
         try {
             const data = await User.find();

@@ -1,4 +1,3 @@
-const SECRET = 'haiancs1993'
 const jwt = require('jsonwebtoken')
 // const assert = require('http-assert')
 const express = require("express")
@@ -21,17 +20,22 @@ router.route('/login').post(async (req, res) => {
         user.password
     )
     if (!isPasswordValid) {
-        return res.status(422).send({
+        return res.status(400).send({
             message: "Password wrong!"
         })
     }
+    const token = jwt.sign(
+        {
+            id: String(user._id),
+            userName: user.username
+        },
+        "RANDOM-TOKEN",
+        { expiresIn: "24h" })
 
-    const token = jwt.sign({
-        id: String(user._id)
-    }, SECRET)
-
-    res.send({
-        user, token
+    res.status(200).send({
+        message: "Login Successful",
+        email: user.email,
+        token,
     })
 })
 
